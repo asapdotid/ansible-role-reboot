@@ -1,5 +1,4 @@
 ---
-
 - name: test if reboot_always is set correctly
   ansible.builtin.assert:
     that:
@@ -15,12 +14,50 @@
       - reboot_delay >= 0
     quiet: yes
 
-- name: test if reboot_up_delay is set correctly
+- name: test if reboot_wait is set correctly
   ansible.builtin.assert:
     that:
-      - reboot_up_delay is defined
-      - reboot_up_delay is number
-      - reboot_up_delay >= 0
+      - reboot_wait is defined
+      - reboot_wait is boolean
+    quiet: yes
+
+- name: test if reboot_connect_timeout is set correctly
+  ansible.builtin.assert:
+    that:
+      - reboot_connect_timeout is defined
+      - reboot_connect_timeout is number
+      - reboot_connect_timeout >= 0
+    quiet: yes
+
+- name: test if reboot_wait_delay is set correctly
+  ansible.builtin.assert:
+    that:
+      - reboot_wait_delay is defined
+      - reboot_wait_delay is number
+      - reboot_wait_delay >= 0
+    quiet: yes
+
+- name: test if reboot_wait_timeout is set correctly
+  ansible.builtin.assert:
+    that:
+      - reboot_wait_timeout is defined
+      - reboot_wait_timeout is number
+      - reboot_wait_timeout >= 0
+    quiet: yes
+
+- name: test if reboot_wait_sleep is set correctly
+  ansible.builtin.assert:
+    that:
+      - reboot_wait_sleep is defined
+      - reboot_wait_sleep is number
+      - reboot_wait_sleep >= 0
+    quiet: yes
+
+- name: test if reboot_interval is set correctly
+  ansible.builtin.assert:
+    that:
+      - reboot_interval is defined
+      - reboot_interval is boolean
     quiet: yes
 
 - name: test if reboot_message is set correctly
@@ -28,4 +65,11 @@
     that:
       - reboot_message is defined
       - reboot_message is string
+    quiet: yes
+
+- name: test if reboot_delay_become_user is set correctly
+  ansible.builtin.assert:
+    that:
+      - reboot_delay_become_user is defined
+      - reboot_delay_become_user is string
     quiet: yes

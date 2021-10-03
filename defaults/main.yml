@@ -8,8 +8,29 @@ reboot_always: no
 # How long to wait before sending a reboot.
 reboot_delay: 4
 
-# Number of seconds to wait before checking if the machine is up.
-reboot_up_delay: 8
+# Wait for host?
+reboot_wait: true
+
+# Maximum number of seconds to wait for a connection to happen before closing and retrying.
+reboot_connect_timeout: 20
+
+# Time to wait before polling the host
+reboot_wait_delay: 10
+
+# Timeout for host to come back up successfully
+reboot_wait_timeout: 300
+
+# Timeout for each connection attempt
+reboot_wait_sleep: 5
+
+# Interval after reboot?
+reboot_interval: false
+
+# Interval before next task
+reboot_interval_seconds: 0
 
 # You can specify a message for rebooting, easier for auditing.
-reboot_message: "Ansible role robertdebock.reboot initiated a reboot."
+reboot_message: "Reboot machine by Ansible."
+
+# Wait connection status after reboot with default user (root) or due to hardening ssh with other user
+reboot_delay_become_user: root

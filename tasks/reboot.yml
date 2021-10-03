@@ -1,21 +1,52 @@
 ---
-- name: flush notified handlers
+- name: REBOOT | Flush notified handlers
   ansible.builtin.meta: flush_handlers
 
-- name: reboot the machine
+- name: REBOOT | Check the uptime prior reboot
   ansible.builtin.shell:
-    cmd: "(sleep {{ reboot_delay }} && {{ reboot_command }} &)"  # noqa 301 This was before the reboot module existed.
+    cmd: uptime
+  register: UPTIME_PRE_REBOOT
+
+- name: REBOOT | Uptime remote machine
+  ansible.builtin.debug:
+    msg: "{{ UPTIME_PRE_REBOOT.stdout }}"
+
+- name: REBOOT | Reboot the machine
+  ansible.builtin.shell:
+    cmd: "(sleep {{ reboot_delay }} && {{ reboot_command }} &)" # noqa 301 This was before the reboot module existed.
   async: 1
   poll: 0
   ignore_errors: yes
 
-- name: 1 wait for the start of reboot
+- name: REBOOT | Waiting respons machine
+  block:
+    - name: REBOOT | 1. wait for the start of reboot
+      ansible.builtin.pause:
+        seconds: "{{ reboot_delay }}"
+
+    - name: REBOOT | 2. wait for the machine to be up
+      ansible.builtin.wait_for_connection:
+        connect_timeout: "{{ reboot_connect_timeout }}"
+        sleep: "{{ reboot_wait_sleep }}"
+        delay: "{{ reboot_wait_delay }}"
+        timeout: "{{ reboot_wait_timeout }}"
+
+    - name: REBOOT | 3. Check the uptime after reboot
+      ansible.builtin.shell:
+        cmd: uptime
+      register: UPTIME_POST_REBOOT
+
+    - name: REBOOT | 4. Uptime remote machine
+      ansible.builtin.debug:
+        msg: "{{ UPTIME_POST_REBOOT.stdout }}"
+
+  become: true
+  become_method: sudo
+  become_user: "{{ reboot_delay_become_user }}"
+  when: reboot_wait
+
+- name: REBOOT | Interval before next task
+  become: no
   ansible.builtin.pause:
-    seconds: "{{ reboot_delay }}"
-
-- name: 2 wait for the machine to be up
-  ansible.builtin.wait_for:
-    delay: "{{ reboot_up_delay }}"
-
-- name: 3 gather facts after reboot
-  ansible.builtin.setup:
+    seconds: "{{ reboot_interval_seconds }}"
+  when: reboot_interval

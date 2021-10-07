@@ -66,10 +66,3 @@
       - reboot_message is defined
       - reboot_message is string
     quiet: yes
-
-- name: test if reboot_delay_become_user is set correctly
-  ansible.builtin.assert:
-    that:
-      - reboot_delay_become_user is defined
-      - reboot_delay_become_user is string
-    quiet: yes

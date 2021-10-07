@@ -92,9 +92,6 @@ reboot_interval_seconds: 0
 
 # You can specify a message for rebooting, easier for auditing.
 reboot_message: "Reboot machine by Ansible."
-
-# Wait connection status after reboot with default user (root) or due to hardening ssh with other user
-reboot_delay_become_user: root
 ```
 
 ## [Requirements](#requirements)

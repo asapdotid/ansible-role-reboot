@@ -25,24 +25,19 @@
         seconds: "{{ reboot_delay }}"
 
     - name: REBOOT | 2. wait for the machine to be up
-      ansible.builtin.wait_for_connection:
+      ansible.builtin.wait_for:
+        port: "{{ ansible_port | default('22') }}"
+        host: "{{ (ansible_ssh_host | default(ansible_host) | default(inventory_hostname)) }}"
         connect_timeout: "{{ reboot_connect_timeout }}"
         sleep: "{{ reboot_wait_sleep }}"
         delay: "{{ reboot_wait_delay }}"
         timeout: "{{ reboot_wait_timeout }}"
+      connection: local
+      when:
+        - ansible_connection is defined
+        - ansible_connection not in [ "container", "docker", "community.docker.docker" ]
 
-    - name: REBOOT | 3. Check the uptime after reboot
-      ansible.builtin.shell:
-        cmd: uptime
-      register: UPTIME_POST_REBOOT
-
-    - name: REBOOT | 4. Uptime remote machine
-      ansible.builtin.debug:
-        msg: "{{ UPTIME_POST_REBOOT.stdout }}"
-
-  become: true
-  become_method: sudo
-  become_user: "{{ reboot_delay_become_user }}"
+  become: false
   when: reboot_wait
 
 - name: REBOOT | Interval before next task
